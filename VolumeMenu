@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class VolumeMenu : MonoBehaviour
+{
+    [SerializeField]private Slider slider_volume_menu;
+    [SerializeField]private AudioSource _audioSource;
+    [SerializeField]private GameObject _panel;
+
+    public void Volume()
+    {
+        _audioSource.volume = slider_volume_menu.value;
+        PlayerPrefs.SetFloat("SavedVolume(Menu)", slider_volume_menu.value); // Записываем в файл настроек число ползунка
+        PlayerPrefs.Save(); // Сохраняем данные ползунка
+    }
+        
+    
+    void Start()
+    {
+        if (PlayerPrefs.HasKey("SavedVolume(Menu)")) // проверка сохранения для диска
+        {
+            _panel.SetActive(false);
+            slider_volume_menu.value = PlayerPrefs.GetFloat("SavedVolume(Menu)"); // отдаём ползунку число, которое сохраняли(если сохраняли)
+        }
+        Volume();
+    }
+}
