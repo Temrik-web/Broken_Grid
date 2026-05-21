@@ -1,0 +1,88 @@
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class Wizard : MonoBehaviour
+{
+    public float speed;
+    private Rigidbody2D rig;
+    private Animator anim;
+    private GameObject _ccursor;
+    public int heal;
+   
+
+    private void Awake()
+    {
+        rig = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        _ccursor = GameObject.FindWithTag("Cursor");
+
+
+    }
+
+
+    private bool _isDead = false;
+    void Update()
+    {
+        if (!_isDead)
+        {
+            Move();
+            Animation();
+            LocalScaleRotate();
+            if (heal <= 0)
+            {
+               Dead();
+            }
+        }
+        
+        
+        
+        
+    }
+
+    private void Dead()
+    {
+        _isDead = true;
+        SceneManager.LoadScene(2);
+    }
+   
+    
+
+    public void TakeDamage(int damageVal) => heal -= damageVal;
+
+    
+    
+    void Move()
+    {
+
+        float hor = Input.GetAxis("Debug Horizontal");
+        float ver = Input.GetAxis("Debug Vertical");
+
+        rig.velocity = new Vector2(x: hor, y: ver).normalized * speed;
+
+    }
+
+    void Animation()
+    {
+        if (rig.velocity == Vector2.zero)
+        {
+            anim.SetBool(Animator.StringToHash("Run"), false);
+        }
+        else
+        {
+            anim.SetBool(Animator.StringToHash("Run"), true);
+        }
+    }
+
+    void LocalScaleRotate()
+    {
+        if (_ccursor.transform.position.x > transform.position.x)
+        {
+            transform.localScale = new Vector3(x: 3, y: 3, z: 1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(x: -3, y: 3, z: 1);
+        }
+    }
+
+}
