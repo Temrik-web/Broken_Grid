@@ -1,0 +1,25 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BtnFX : MonoBehaviour
+{
+    private void Start()
+    {
+        Time.timeScale = 1f;
+    }
+    public AudioSource myFX;
+    public AudioClip hoverFX;
+    public AudioClip clickFX;
+
+    public void hoverSound()
+    {
+        myFX.PlayOneShot(hoverFX);
+    }
+
+    public void clickSound()
+    {
+        myFX.PlayOneShot(clickFX);
+    }
+    
+}
