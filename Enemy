@@ -1,0 +1,155 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Video;
+using Random = System.Random;
+using UnityEngine.SceneManagement;
+
+
+
+public class For_Enemy : MonoBehaviour
+{
+    public int heal;
+    public float speed;
+    private Animator _anim;
+    private PolygonCollider2D _pol2d;
+    public int damage;
+    private Rigidbody2D _rig2d;
+    public AudioSource audioSource;
+    public TMP_Text TextDamage;
+    //public float deathDelay;
+   // public int boxKill;
+
+   private static int boxkill = 0;
+
+
+    private GameObject _player;
+    private GameObject _HP;
+
+    IEnumerator CreateTextDamage(int damageVal)
+    {
+        Vector3 randomPos = new Vector3(transform.position.x + UnityEngine.Random.Range(-1.1f, 1.1f), transform.position.y + UnityEngine.Random.Range(-1f, 1.4f));
+        
+        float randomZ = UnityEngine.Random.Range(-45, 45);
+        Quaternion randomRot = Quaternion.Euler(0, 0, randomZ);
+        
+        TMP_Text text = Instantiate(TextDamage, randomPos, randomRot);
+        
+        yield return new WaitForSeconds(1f);
+        Destroy(text.gameObject);
+    }
+
+    private void Awake()
+    {
+        _player = GameObject.FindWithTag("Player");
+        _HP = GameObject.FindWithTag("HP");
+        _anim = GetComponent<Animator>();
+        _pol2d = GetComponent <PolygonCollider2D>();
+    }
+
+    void Move()
+    {
+        transform.position =
+            Vector2.MoveTowards(transform.position, _player.transform.position, Time.deltaTime * speed);
+    }
+
+    private bool _isDead;
+    
+    private void Update()
+    {
+        if (!_isDead)
+        {
+            if (heal <= 0)
+            {
+               /* boxkill++;
+                if (boxkill >= 2)
+                {
+                    SceneManager.LoadScene(2);
+                } */
+                StartCoroutine(Dead());
+                
+            }
+           
+            
+            Move();
+            LocalScaleRotate();
+        }
+        
+    }
+    
+    
+    
+    IEnumerator Dead()
+    {
+       
+        _isDead = true;
+        foreach (Collider2D _pol2D in GetComponents<Collider2D>())
+        {
+            _pol2D.enabled = false;
+        }
+        int randomIdAnimation = UnityEngine.Random.Range(0, 4);
+        _anim.SetInteger(Animator.StringToHash("Dead"), randomIdAnimation);
+        
+        if(randomIdAnimation == 0)
+        {
+            yield return new WaitForSeconds(1.6f);
+        }
+        else if(randomIdAnimation == 1)
+        {
+            yield return new WaitForSeconds(1.5f);
+        } 
+        else if (randomIdAnimation == 2)
+        {
+            yield return new WaitForSeconds(1.5f);
+        }
+        else if (randomIdAnimation == 3)
+        {
+            yield return new WaitForSeconds(1.1f);
+        }
+
+        Destroy(gameObject);
+        
+    }
+    public void TakeDamage(int damageVal)
+    {
+        heal -= damageVal;
+        StartCoroutine(CreateTextDamage(damageVal));
+    }
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            collision.GetComponent<Wizard>().TakeDamage(damage);
+            Destroy(GameObject.FindWithTag("HP"));
+            
+            audioSource.PlayOneShot(audioSource.clip);
+            
+            Destroy(gameObject);
+        }
+
+        
+    } 
+    void LocalScaleRotate()
+    {
+        if (_isDead) return; 
+        
+        if (_player.transform.position.x > transform.position.x)
+        {
+            transform.localScale = new Vector3(x: 2.5f, y: 2.5f, z:1);
+        }
+        else
+        {
+            transform.localScale = new Vector3(x: -2.5f, y: 2.5f, z:1);
+        }
+    }
+        
+    
+
+   
+}
+    
+    
+       
