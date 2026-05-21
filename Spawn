@@ -1,0 +1,44 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
+
+public class Spawn : MonoBehaviour
+{
+    
+    public GameObject prefab;
+    public float timeRate_Spawn;
+    private float _time_Rate;
+    public GameObject enemy_prefab;
+
+    
+    public Transform[] spawnPoints; 
+
+    private void Update()
+    {
+        if (_time_Rate <= 0)
+        {
+            StartCoroutine(spawn()); 
+            _time_Rate = timeRate_Spawn;
+        }
+        else
+        {
+            _time_Rate -= Time.deltaTime;
+        }
+    }
+
+    IEnumerator spawn()
+    {
+        if (spawnPoints.Length == 0) yield break;
+        
+        int randomIndex =UnityEngine.Random.Range(0, spawnPoints.Length);
+        Vector2 spawnPosition = spawnPoints[randomIndex].position;
+        
+        GameObject Box = Instantiate(prefab, spawnPosition, Quaternion.identity);
+        
+        yield return new WaitForSeconds(1f);
+        Instantiate(enemy_prefab, spawnPosition, Quaternion.identity);
+        Destroy(Box);
+    }
+}
