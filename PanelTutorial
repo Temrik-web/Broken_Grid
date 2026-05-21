@@ -1,0 +1,51 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PanelTutorial : MonoBehaviour
+{
+   [SerializeField] private GameObject panel;
+   [SerializeField] private AudioSource audio;
+   private void Start()
+   {
+       if (PlayerPrefs.GetInt("Panel_tutor", 0) == 0)
+       {
+           panel.SetActive(true);
+           audio.enabled = false;
+       }
+   }
+   
+   void Update()
+   {
+       if (panel.activeSelf == true)
+       {
+           Time.timeScale = 0f;
+       } 
+   }
+   
+   public void CloseTutorPanel()
+   {
+       StartCoroutine(delay());
+   }
+   
+   IEnumerator delay()
+   {
+       yield return new WaitForSecondsRealtime(0.23f);
+       Time.timeScale = 1f;
+       panel.SetActive(false);
+       audio.enabled = true;
+       
+       PlayerPrefs.SetInt("Panel_tutor", 15);
+       PlayerPrefs.Save();
+   }
+   
+  
+   
+      
+     
+   
+   
+   
+}
