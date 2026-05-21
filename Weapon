@@ -1,0 +1,71 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Weapon : MonoBehaviour
+{
+    public GameObject prefab_bullet;
+    public int damage;
+    public float fire_Rate;
+    private float time_fire_rate;
+    private GameObject position_spawn_bullet;
+    public float bullet_Force;
+    private GameObject _cursor;
+    public AudioSource audio;
+    private Animator _animator;
+    public float TTD;
+    
+    
+
+
+    private void Awake()
+    {
+        position_spawn_bullet = transform.GetChild(0).gameObject;
+        _cursor = GameObject.FindWithTag("Cursor");
+        _animator = GetComponent<Animator>();
+
+    }
+
+    void Fire()
+    {
+        if (Time.timeScale == 0) return;
+        
+        if (time_fire_rate <= 0)
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                audio.PlayOneShot(audio.clip /*VOLUME SCALE 2f*/ );
+                _animator.SetBool(Animator.StringToHash("Fire"), true);
+                GameObject bullet = Instantiate(prefab_bullet, position_spawn_bullet.transform.position, transform.rotation);
+                    
+                bullet.GetComponent<Rigidbody2D>().velocity =
+                    (_cursor.transform.position - transform.position).normalized * bullet_Force;
+                bullet.GetComponent<Bullet>().SetDamage(damage);
+                time_fire_rate = fire_Rate;
+                
+                
+                Destroy(bullet, TTD);
+
+            }
+
+           
+        }
+        else
+        {
+            _animator.SetBool(Animator.StringToHash("Fire"), false);
+            time_fire_rate -= Time.deltaTime;
+        }
+
+
+
+
+
+    }
+       
+    
+    void Update()
+    {
+        Fire();
+        
+    }
+}
