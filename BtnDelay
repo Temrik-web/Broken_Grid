@@ -1,0 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
+
+
+
+
+public class BtnDelay : MonoBehaviour
+{
+   [SerializeField] private GameObject panel;
+   public int scene;
+   
+   public void Change_Scenes() 
+   {
+      StartCoroutine(DelayScenes());
+   }
+
+   IEnumerator DelayScenes()
+   {
+      yield return new WaitForSecondsRealtime(0.2f);
+      SceneManager.LoadScene(scene);
+   }
+
+   public void exitPanel()
+   {
+      StartCoroutine(DelayPanel());
+   }
+
+   IEnumerator DelayPanel()
+   {
+      yield return new WaitForSecondsRealtime(0.2f);
+      panel.SetActive(false);
+   }
+   
+   public void clickToExit() //Для выхода из игры(задержка)
+   {
+      StartCoroutine(exitDelay());
+   }
+   IEnumerator exitDelay()
+   {
+      yield return new WaitForSecondsRealtime(0.23f);
+      Application.Quit();
+   }
+}
