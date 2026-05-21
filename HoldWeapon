@@ -1,0 +1,38 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
+
+public class Hold_Weapon: MonoBehaviour
+{
+    public float distance;
+    public float offset;
+
+
+    private GameObject _cursor;
+    private GameObject _player;
+
+    private void Awake()
+    {
+        _cursor = GameObject.FindWithTag("Cursor");
+        _player = GameObject.FindWithTag("Player");
+
+    }
+    
+
+
+  
+    void Update()
+    {
+        transform.position = _player.transform.position;
+        
+        Vector3 difference = _cursor.transform.position - _player.transform.position;
+        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler( 0f,  0f, rotZ + offset);
+
+        transform.GetChild(0).transform.localPosition = new Vector3(x:distance, y:0f, z:0f);
+
+    }
+}
